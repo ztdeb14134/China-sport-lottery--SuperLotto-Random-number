@@ -10,7 +10,7 @@ use chrono::prelude::*;
 fn main() {
     match Local::now().date_naive().weekday() {
         chrono::Weekday::Mon => {
-            let super_lotto = SuperLotto::new(5, 2, 8);
+            let super_lotto = SuperLotto::new(5, 4, 1);
             super_lotto.run().unwrap();
             println!("12 13 19 25 34 : 05 06\n07 09 13 19 27 : 04 08");
             println!("+18大乐透套餐");
@@ -21,7 +21,7 @@ fn main() {
             println!("12 13 19 25 34 : 05 06\n07 09 13 19 27 : 04 08");
         }
         chrono::Weekday::Wed => {
-            let super_lotto = SuperLotto::new(5, 2, 6);
+            let super_lotto = SuperLotto::new(5, 2, 2);
             super_lotto.run().unwrap();
             println!("全部追加")
         }

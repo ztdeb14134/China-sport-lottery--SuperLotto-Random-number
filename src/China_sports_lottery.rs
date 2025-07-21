@@ -86,9 +86,9 @@ impl SuperLotto {
             handle.join().unwrap();
         }
         println!();
-        result.iter().for_each(|x| println!("{:?}", x));
-        println!("按Enter退出");
-        io::stdin().read_line(&mut String::new()).unwrap();
+        result
+            .iter()
+            .for_each(|x| x.iter().for_each(|XX| println!("{} ", XX)));
         Ok(())
     }
 }
