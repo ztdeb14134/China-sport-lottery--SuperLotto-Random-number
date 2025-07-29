@@ -1,53 +1,49 @@
 #[allow(non_snake_case)]
 mod China_sports_lottery;
+use crate::China_sports_lottery::PrintResult;
 use crate::China_sports_lottery::*;
 use chrono::prelude::*;
 fn main() {
+    //26 + 18 + 18 + 18 + 40 = 118¥
     match Local::now().date_naive().weekday() {
         chrono::Weekday::Mon => {
+            // 26¥
             let mut super_lotto = SuperLotto::new(PlayType::KeyFiller(5, 0, 1, 11), 1, false);
-            let _ = super_lotto
-                .draw()
-                .unwrap()
-                .into_iter()
-                .map(|s| println!("{}", s));
+            super_lotto.draw().printout();
             println!("12 13 19 25 34 : 05 06\n07 09 13 19 27 : 04 08");
         }
         chrono::Weekday::Tue => {
-            let mut super_lotto = SuperLotto::new(PlayType::Duplex(5, 3), 2, false);
-            let _ = super_lotto
-                .draw()
-                .unwrap()
-                .into_iter()
-                .map(|s| println!("{}", s));
+            // 18¥
+            SuperLotto::all_cast_seven().printout();
             println!("12 13 19 25 34 : 05 06\n07 09 13 19 27 : 04 08");
         }
         chrono::Weekday::Wed => {
+            // 18¥
             let mut super_lotto = SuperLotto::new(PlayType::Single, 2, true);
             super_lotto.set_multiple(3);
-            let _ = super_lotto
-                .draw()
-                .unwrap()
-                .into_iter()
-                .map(|s| println!("{}", s));
+            super_lotto.draw().printout();
         }
         chrono::Weekday::Thu => {
+            // 18¥
             println!("12 13 19 25 34 : 05 06\n07 09 13 19 27 : 04 08");
             let mut super_lotto = SuperLotto::new(PlayType::Duplex(6, 2), 1, false);
-            let _ = super_lotto
-                .draw()
-                .unwrap()
-                .into_iter()
-                .map(|s| println!("{}", s));
+            super_lotto.draw().printout();
         }
         chrono::Weekday::Fri => {
+            // 40¥
             let mut super_lotto = SuperLotto::new(PlayType::KeyFiller(2, 5, 1, 2), 1, false);
-            let _ = super_lotto
-                .draw()
-                .unwrap()
-                .into_iter()
-                .map(|s| println!("{}", s));
+            super_lotto.draw().printout();
         }
         _ => println!("节制"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test0() {
+        let mut sl = SuperLotto::new(PlayType::Single, 1, false);
+        sl.draw().printout();
     }
 }

@@ -32,6 +32,14 @@ pub struct SuperLotto {
     pub number: usize,
     pub Additional: bool,
 }
+pub trait PrintResult {
+    fn printout(self);
+}
+impl PrintResult for Result<Vec<String>, ()> {
+    fn printout(self) {
+        self.unwrap().into_iter().for_each(|s| println!("{}", s));
+    }
+}
 impl SuperLotto {
     pub fn new(play_type: PlayType, number: usize, Additional: bool) -> Self {
         SuperLotto {
@@ -172,6 +180,54 @@ impl SuperLotto {
                 handle.join().unwrap();
             }
         }
+        Ok(result)
+    }
+    pub fn all_cast_seven() -> Result<Vec<String>, ()> {
+        let progress = Arc::new(AtomicUsize::new(0));
+        let progress_clone = Arc::clone(&progress);
+        let mut first: Vec<String> = (1..=35).map(|num| format!("{:02}", num)).collect();
+        let mut last: Vec<String> = (1..=14)
+            .map(|num| format!("{:02}", ((num - 1) % 12) + 1))
+            .collect();
+        let mut rng: rand::prelude::ThreadRng = rand::rng();
+        let times: usize = rng.random_range(19770801..20130330);
+        thread::spawn(move || {
+            loop {
+                let val = progress_clone.load(Ordering::Relaxed);
+                if val == times {
+                    break;
+                }
+                let percent: f64 = val as f64 / times as f64;
+
+                let filled = (percent * 50.0).round() as usize;
+                let empty = 50 - filled;
+                let bar: String = "\u{25a0}"
+                    .repeat(filled)
+                    .truecolor(100, (255.0 * percent) as u8, 100)
+                    .to_string();
+                let space = " ".repeat(empty);
+                print!("{}{} {:>3}", bar, space, (percent * 100.0).round() as usize);
+                stdout().flush().unwrap();
+            }
+        });
+        for _ in 0..times {
+            first.shuffle(&mut rng);
+            last.shuffle(&mut rng);
+            progress.fetch_add(1, Ordering::Relaxed);
+        }
+        let mut result = Vec::new();
+        for _ in 0..7 {
+            let mut front_result: Vec<String> = first.drain(0..5).collect();
+            let mut behind_result: Vec<String> = last.drain(0..2).collect();
+            front_result.sort();
+            behind_result.sort();
+            result.push(format!(
+                "{} : {}",
+                front_result.join(" "),
+                behind_result.join(" ")
+            ));
+        }
+        println!();
         Ok(result)
     }
 }
