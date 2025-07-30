@@ -36,14 +36,16 @@ fn main() {
         }
         _ => println!("节制"),
     }
+    println!("Enter to quit...");
+    std::io::stdin().read_line(&mut String::new()).unwrap();
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn test0() {
-        let mut sl = SuperLotto::new(PlayType::Single, 1, false);
-        sl.draw().printout();
-    }
-}
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     #[test]
+//     fn test0() {
+//         let mut sl = SuperLotto::new(PlayType::Single, 1, false);
+//         sl.draw().printout();
+//     }
+// }

@@ -238,3 +238,76 @@ impl SuperLotto {
         Ok(result)
     }
 }
+#[cfg(test)]
+mod test_probability {
+
+    use std::{
+        sync::{
+            Arc,
+            atomic::{AtomicU64, Ordering},
+        },
+        thread,
+    };
+
+    use rand::seq::SliceRandom;
+
+    #[test]
+    fn test() {
+        let value: u64 = 0b_01001_00010_00010_00000_00000_00000_00100__00010_00010_00;
+        let first = vec![2, 5, 9, 14, 33];
+        let last = vec![4, 9];
+        let mut result_value: u64 = 0;
+        for i in 0..5 {
+            result_value |= 1 << (47 - first[i]); // 最高位是1号，最低位是35号
+        }
+        for i in 0..2 {
+            result_value |= 1 << (12 - last[i]); // 最高位是1号，最低位是12号
+        }
+        println!("{:048b}", result_value);
+        println!("{:048b}", value);
+        assert_eq!(result_value, value);
+    }
+    #[test]
+    fn fast_test() {
+        let value: u64 = 0b_01001_00010_00010_00000_00000_00000_00100__00010_00010_00;
+        let mut first = (1..=35).collect::<Vec<usize>>();
+        let mut last = (1..=12).collect::<Vec<usize>>();
+        let mut rng: rand::prelude::ThreadRng = rand::rng();
+
+        let times = Arc::new(AtomicU64::new(0));
+        let times_clone = Arc::clone(&times);
+        let result_value_arc = Arc::new(AtomicU64::new(0));
+        let result_value_clone = Arc::clone(&result_value_arc);
+        let handle = thread::spawn(move || {
+            loop {
+                print!(
+                    "\r{} {:048b}",
+                    times_clone.load(Ordering::Relaxed),
+                    result_value_clone.load(Ordering::Relaxed)
+                );
+            }
+        });
+
+        loop {
+            times.fetch_add(1, Ordering::Relaxed);
+            first.shuffle(&mut rng);
+            last.shuffle(&mut rng);
+            let mut result_value: u64 = 0;
+            //result_value是37位的二进制数,从高位往低位看,将first前5个数的字面值对应的位置1,将last前两个数的字面值+35对应的位置置1
+            for i in 0..5 {
+                result_value |= 1 << (47 - first[i]); // 最高位是1号，最低位是35号
+            }
+            for i in 0..2 {
+                result_value |= 1 << (12 - last[i]); // 最高位是1号，最低位是12号
+            }
+            result_value_arc.store(result_value, Ordering::Relaxed);
+            if result_value == value {
+                handle.join().unwrap();
+                println!("\n{:048b}", result_value);
+                println!("{:048b}", value);
+                break;
+            }
+        }
+        assert_eq!(value, value);
+    }
+}
