@@ -103,13 +103,15 @@ impl SuperLotto {
                         front_result.join(" "),
                         behind_result.join(" "),
                         format!(
-                            "{}{}",
-                            if self.multiple.is_some() {
-                                format!("{}倍", self.multiple.unwrap())
-                            } else {
-                                "".to_string()
-                            },
-                            if self.Additional { "追加" } else { "" }
+                            "{}",
+                            match self.multiple {
+                                Some(m) => format!(
+                                    "  {}倍{}",
+                                    m,
+                                    if self.Additional { "追加" } else { "" }
+                                ),
+                                None => format!("{}", if self.Additional { "  追加" } else { "" }),
+                            }
                         )
                     ));
                 }
@@ -130,13 +132,15 @@ impl SuperLotto {
                         front_result.join(" "),
                         behind_result.join(" "),
                         format!(
-                            "{}{}",
-                            if self.multiple.is_some() {
-                                format!("{}倍", self.multiple.unwrap())
-                            } else {
-                                "".to_string()
-                            },
-                            if self.Additional { "追加" } else { "" }
+                            "{}",
+                            match self.multiple {
+                                Some(m) => format!(
+                                    "  {}倍{}",
+                                    m,
+                                    if self.Additional { "追加" } else { "" }
+                                ),
+                                None => format!("{}", if self.Additional { "  追加" } else { "" }),
+                            }
                         )
                     ));
                 }
@@ -161,13 +165,15 @@ impl SuperLotto {
                         "第{}注{}:\n前区胆:{}\n前区拖:{}\n后区胆:{}\n后区拖:{}",
                         x + 1,
                         format!(
-                            "{}{}",
-                            if self.multiple.is_some() {
-                                format!("{}倍", self.multiple.unwrap())
-                            } else {
-                                "".to_string()
-                            },
-                            if self.Additional { "追加" } else { "" }
+                            "{}",
+                            match self.multiple {
+                                Some(m) => format!(
+                                    "  {}倍{}",
+                                    m,
+                                    if self.Additional { "追加" } else { "" }
+                                ),
+                                None => format!("{}", if self.Additional { "  追加" } else { "" }),
+                            }
                         ),
                         keyfront.join(" "),
                         filler_front_result.join(" "),
@@ -191,7 +197,7 @@ impl SuperLotto {
             .collect();
         let mut rng: rand::prelude::ThreadRng = rand::rng();
         let times: usize = rng.random_range(19770801..20130330);
-        thread::spawn(move || {
+        let handle = thread::spawn(move || {
             loop {
                 let val = progress_clone.load(Ordering::Relaxed);
                 if val == times {
@@ -227,6 +233,7 @@ impl SuperLotto {
                 behind_result.join(" ")
             ));
         }
+        handle.join().unwrap();
         println!();
         Ok(result)
     }
