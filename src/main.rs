@@ -1,9 +1,18 @@
 #[allow(non_snake_case)]
 mod China_sports_lottery;
+use std::env;
+
 use crate::China_sports_lottery::PrintResult;
 use crate::China_sports_lottery::*;
 use chrono::prelude::*;
 fn main() {
+    let args = env::args().collect::<Vec<_>>();
+    if args.len() > 1
+        && (args[1] == "test" || args[1] == "-test" || args[1] == "--test" || args[1] == "-t")
+    {
+        SuperLotto::fast_test();
+        return;
+    }
     //26 + 18 + 18 + 18 + 40 = 118¥
     match Local::now().date_naive().weekday() {
         chrono::Weekday::Mon => {

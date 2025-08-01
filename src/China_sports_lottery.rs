@@ -4,7 +4,7 @@ use std::{
     io::{Write, stdout},
     sync::{
         Arc,
-        atomic::{AtomicUsize, Ordering},
+        atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering},
     },
     thread,
 };
@@ -237,39 +237,10 @@ impl SuperLotto {
         println!();
         Ok(result)
     }
-}
-#[cfg(test)]
-mod test_probability {
-
-    use std::{
-        sync::{
-            Arc,
-            atomic::{AtomicU64, Ordering},
-        },
-        thread,
-    };
-
-    use rand::seq::SliceRandom;
-
-    #[test]
-    fn test() {
-        let value: u64 = 0b_01001_00010_00010_00000_00000_00000_00100__00010_00010_00;
-        let first = vec![2, 5, 9, 14, 33];
-        let last = vec![4, 9];
-        let mut result_value: u64 = 0;
-        for i in 0..5 {
-            result_value |= 1 << (47 - first[i]); // 最高位是1号，最低位是35号
-        }
-        for i in 0..2 {
-            result_value |= 1 << (12 - last[i]); // 最高位是1号，最低位是12号
-        }
-        println!("{:048b}", result_value);
-        println!("{:048b}", value);
-        assert_eq!(result_value, value);
-    }
-    #[test]
-    fn fast_test() {
-        let value: u64 = 0b_01001_00010_00010_00000_00000_00000_00100__00010_00010_00;
+    #[allow(dead_code)]
+    pub fn fast_test() {
+        //let value: u64 = 0b_00000_00000_00000_00000_00000_00000_00000__00000_00000_00;
+        let value: u64 = 0b_00000_00000_01100_00010_00001_00000_00010__00001_10000_00;
         let mut first = (1..=35).collect::<Vec<usize>>();
         let mut last = (1..=12).collect::<Vec<usize>>();
         let mut rng: rand::prelude::ThreadRng = rand::rng();
@@ -278,14 +249,25 @@ mod test_probability {
         let times_clone = Arc::clone(&times);
         let result_value_arc = Arc::new(AtomicU64::new(0));
         let result_value_clone = Arc::clone(&result_value_arc);
+        let running = Arc::new(AtomicBool::new(true));
+        let running_clone = Arc::clone(&running);
+
         let handle = thread::spawn(move || {
-            loop {
+            while running_clone.load(Ordering::Relaxed) {
                 print!(
-                    "\r{} {:048b}",
+                    "\r{} {}",
                     times_clone.load(Ordering::Relaxed),
-                    result_value_clone.load(Ordering::Relaxed)
+                    format!("{:047b}", result_value_clone.load(Ordering::Relaxed))
+                        .chars()
+                        .collect::<Vec<_>>()
+                        .chunks(5)
+                        .map(|chunk| chunk.iter().collect::<String>())
+                        .collect::<Vec<_>>()
+                        .join("_")
                 );
+                stdout().flush().unwrap()
             }
+            println!();
         });
 
         loop {
@@ -302,12 +284,36 @@ mod test_probability {
             }
             result_value_arc.store(result_value, Ordering::Relaxed);
             if result_value == value {
-                handle.join().unwrap();
-                println!("\n{:048b}", result_value);
-                println!("{:048b}", value);
+                running.store(false, Ordering::Relaxed); // 通知输出线程退出
+                handle.join().expect("Couldn't join");
+                println!("\n找到结果：");
+                println!("第{}次", times.load(Ordering::Relaxed));
+                println!("\n{:047b}", result_value);
+                println!("{:047b}", value);
                 break;
             }
         }
         assert_eq!(value, value);
+    }
+}
+
+#[cfg(test)]
+mod test_probability {
+
+    #[test]
+    fn test() {
+        let value: u64 = 0b_01000_10000_00000_00000_01100_00000_00100__10000_00001_00;
+        let first = vec![2, 6, 23, 22, 33];
+        let last = vec![1, 10];
+        let mut result_value: u64 = 0;
+        for i in 0..5 {
+            result_value |= 1 << (47 - first[i]); // 最高位是1号，最低位是35号
+        }
+        for i in 0..2 {
+            result_value |= 1 << (12 - last[i]); // 最高位是1号，最低位是12号
+        }
+        println!("{:047b}", result_value);
+        println!("{:047b}", value);
+        assert_eq!(result_value, value);
     }
 }
