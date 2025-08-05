@@ -1,60 +1,54 @@
 #[allow(non_snake_case)]
 mod China_sports_lottery;
+mod args;
+mod printtrait;
 use std::env;
 
-use crate::China_sports_lottery::PrintResult;
 use crate::China_sports_lottery::*;
+use crate::args::args_handle;
+use crate::printtrait::PrintResult;
 use chrono::prelude::*;
+
+macro_rules! protect_code {
+    () => {
+        [
+            "12 13 19 25 34 : 05 06",
+            "07 09 13 19 27 : 04 08",
+            "03 09 20 21 28 : 03 04", //420683_20040921_0328
+        ]
+        .printout();
+    };
+}
 fn main() {
-    let args = env::args().collect::<Vec<_>>();
-    if args.len() > 1
-        && (args[1] == "test" || args[1] == "-test" || args[1] == "--test" || args[1] == "-t")
-    {
-        SuperLotto::fast_test();
+    if args_handle(env::args().collect::<Vec<_>>()) {
         return;
     }
-    //26 + 18 + 18 + 18 + 40 = 118¥
     match Local::now().date_naive().weekday() {
         chrono::Weekday::Mon => {
-            // 26¥
-            let mut super_lotto = SuperLotto::new(PlayType::KeyFiller(5, 0, 1, 11), 1, false);
+            let mut super_lotto = SuperLotto::new(PlayType::KeyFiller(0, 5, 1, 11), 1, false);
             super_lotto.draw().printout();
-            println!("12 13 19 25 34 : 05 06\n07 09 13 19 27 : 04 08");
+            protect_code!();
         }
         chrono::Weekday::Tue => {
-            // 18¥
             SuperLotto::all_cast_seven().printout();
-            println!("12 13 19 25 34 : 05 06\n07 09 13 19 27 : 04 08");
         }
         chrono::Weekday::Wed => {
-            // 18¥
             let mut super_lotto = SuperLotto::new(PlayType::Single, 2, true);
             super_lotto.set_multiple(3);
             super_lotto.draw().printout();
+            protect_code!();
         }
         chrono::Weekday::Thu => {
-            // 18¥
-            println!("12 13 19 25 34 : 05 06\n07 09 13 19 27 : 04 08");
             let mut super_lotto = SuperLotto::new(PlayType::Duplex(6, 2), 1, false);
             super_lotto.draw().printout();
         }
         chrono::Weekday::Fri => {
-            // 40¥
             let mut super_lotto = SuperLotto::new(PlayType::KeyFiller(2, 5, 1, 2), 1, false);
             super_lotto.draw().printout();
+            protect_code!();
         }
         _ => println!("节制"),
     }
     println!("Enter to quit...");
     std::io::stdin().read_line(&mut String::new()).unwrap();
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     #[test]
-//     fn test0() {
-//         let mut sl = SuperLotto::new(PlayType::Single, 1, false);
-//         sl.draw().printout();
-//     }
-// }

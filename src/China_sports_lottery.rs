@@ -32,14 +32,7 @@ pub struct SuperLotto {
     pub number: usize,
     pub Additional: bool,
 }
-pub trait PrintResult {
-    fn printout(self);
-}
-impl PrintResult for Result<Vec<String>, ()> {
-    fn printout(self) {
-        self.unwrap().into_iter().for_each(|s| println!("{}", s));
-    }
-}
+
 impl SuperLotto {
     pub fn new(play_type: PlayType, number: usize, Additional: bool) -> Self {
         SuperLotto {
@@ -212,7 +205,12 @@ impl SuperLotto {
                     .truecolor(100, (255.0 * percent) as u8, 100)
                     .to_string();
                 let space = " ".repeat(empty);
-                print!("{}{} {:>3}", bar, space, (percent * 100.0).round() as usize);
+                print!(
+                    "\r{}{} {:>3}",
+                    bar,
+                    space,
+                    (percent * 100.0).round() as usize
+                );
                 stdout().flush().unwrap();
             }
         });
@@ -240,7 +238,7 @@ impl SuperLotto {
     #[allow(dead_code)]
     pub fn fast_test() {
         //let value: u64 = 0b_00000_00000_00000_00000_00000_00000_00000__00000_00000_00;
-        let value: u64 = 0b_00000_00000_01100_00010_00001_00000_00010__00001_10000_00;
+        let value: u64 = 0b_00000_00111_10000_00000_00000_00000_00001__00001_00000_10;
         let mut first = (1..=35).collect::<Vec<usize>>();
         let mut last = (1..=12).collect::<Vec<usize>>();
         let mut rng: rand::prelude::ThreadRng = rand::rng();
