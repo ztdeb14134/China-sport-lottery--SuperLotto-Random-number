@@ -35,8 +35,8 @@ pub fn args_handle(args: Vec<String>) -> bool {
             let atta_number: &mut String = &mut String::new();
             std::io::stdin().read_line(atta_number).unwrap();
             println!(
-                "中奖金额: {}",
-                crate::sql::func::check_number(qihao, atta_number.trim().to_string())
+                "中奖金额: ¥{:.2}",
+                crate::sql::func::check_number(qihao, atta_number.trim().to_string()) as f64
             );
             return true;
         }
