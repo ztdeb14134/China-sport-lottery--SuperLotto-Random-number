@@ -2,6 +2,7 @@
 mod China_sports_lottery;
 mod args;
 mod printtrait;
+mod sql;
 use std::env;
 
 use crate::China_sports_lottery::*;

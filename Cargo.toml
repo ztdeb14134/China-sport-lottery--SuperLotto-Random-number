@@ -8,3 +8,5 @@ rand = "*"
 crossterm= "*"
 colored="*"
 chrono="*"
+rusqlite = { version = "0.37", features = ["bundled"] }
+itertools = "0.14.0"

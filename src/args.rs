@@ -17,6 +17,20 @@ pub fn args_handle(args: Vec<String>) -> bool {
             println!("  -b, --birthday    生日玩法");
             return true;
         }
+        if args[1] == "-c" || args[1] == "--check" {
+            println!("请输入期号");
+            let qihao: &mut String = &mut String::new();
+            std::io::stdin().read_line(qihao).unwrap();
+            let qihao = qihao.trim().parse::<u32>().unwrap_or(0);
+            println!("请输入号码,格式如: 01 02 03 04 05 : 01 02");
+            let atta_number: &mut String = &mut String::new();
+            std::io::stdin().read_line(atta_number).unwrap();
+            println!(
+                "中奖金额: {}",
+                crate::sql::func::check_number(qihao, atta_number.trim().to_string())
+            );
+            return true;
+        }
         if args[1] == "test" || args[1] == "-test" || args[1] == "--test" || args[1] == "-t" {
             SuperLotto::fast_test();
             return true;
