@@ -27,7 +27,21 @@ pub fn print_table_columns() {
     }
 }
 #[allow(unused)]
+pub fn print_qihao_all(qihao:u32){
+    let db_path = "lottoSql.db";
+    let conn = init_db(db_path).expect("Failed to initialize database");
+    let mut stmt = conn
+        .prepare("SELECT number FROM numbers WHERE qihao_id = ?1")
+        .expect("Failed to prepare statement");
+    let rows = stmt
+        .query_map([qihao], |row| row.get::<_, String>(0))
+        .expect("Failed to query rows");
 
+    for row in rows {
+        let number: String = row.expect("Failed to get row");
+        println!("Qihao {}: Number: {}", qihao, number);
+    }
+}
 pub fn print_all() {
     //输出数据库表中的所有数据
     let db_path = "lottoSql.db";
