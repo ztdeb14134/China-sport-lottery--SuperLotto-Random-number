@@ -1,21 +1,28 @@
 use crate::{
-    China_sports_lottery::{PlayType, SuperLotto},
-    printtrait::PrintResult,
+    printtrait::PrintResult, sql::sqltable::{print_all, print_table_columns}, China_sports_lottery::{PlayType, SuperLotto}
 };
 
 pub fn args_handle(args: Vec<String>) -> bool {
     if args.len() > 1 {
         if args[1] == "help" || args[1] == "-h" || args[1] == "--h" || args[1] == "--help" {
-            println!("用法: superlotto [选项]");
-            println!("选项:");
-            println!("  -h, --help        显示帮助信息");
-            println!("  -t, --test        快速测试");
-            println!("  -d, --duplex      双面玩法");
-            println!("  -k, --keyfiller   键盘填充玩法");
-            println!("  -s, --single      单式玩法");
-            println!("  -a, --allseven    全七玩法");
-            println!("  -b, --birthday    生日玩法");
             return true;
+        }
+        if args[1] == "database" || args[1] == "-db" || args[1] == "--db" || args[1] == "--database"
+        {
+            if args.len() > 2 {
+                if args[2] == "add" || args[2] == "-a" || args[2] == "--a" || args[2] == "--add" {
+                    println!("请输入号码,格式如: 01 02 03 04 05 : 01 02");
+                    let atta_number: &mut String = &mut String::new();
+                    std::io::stdin().read_line(atta_number).unwrap();
+                    crate::sql::func::insert_number(vec![atta_number.trim().to_string()]);
+                    return true;
+                }
+                if args[2] == "check" || args[2] == "-c" || args[2] == "--c" || args[2] == "--check"
+                {
+                    print_all();
+                    return true;
+                }
+            }
         }
         if args[1] == "-c" || args[1] == "--check" {
             println!("请输入期号");
@@ -85,10 +92,9 @@ pub fn args_handle(args: Vec<String>) -> bool {
             super_lotto.set_multiple(age);
             super_lotto.draw().printout();
             return false;
-        } else {
-            println!("无效的参数: {}", args[1]);
-            return true;
         }
+        println!("无效的参数: {}", args[1]);
+        return true;
     } else {
         false
     }
