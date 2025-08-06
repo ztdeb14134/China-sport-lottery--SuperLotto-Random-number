@@ -1,5 +1,7 @@
 use crate::{
-    printtrait::PrintResult, sql::sqltable::{print_all, print_qihao_all}, China_sports_lottery::{PlayType, SuperLotto}
+    China_sports_lottery::{PlayType, SuperLotto},
+    printtrait::PrintResult,
+    sql::sqltable::{print_all, print_qihao_all},
 };
 
 pub fn args_handle(args: Vec<String>) -> bool {
@@ -21,8 +23,9 @@ pub fn args_handle(args: Vec<String>) -> bool {
                 {
                     if args.len() > 3 {
                         print_qihao_all(args[3].trim().parse::<u32>().unwrap());
+                    } else {
+                        print_all();
                     }
-                    print_all();
                     return true;
                 }
             }
