@@ -1,7 +1,22 @@
-use crate::{printtrait::PrintResult, China_sports_lottery::{PlayType, SuperLotto}};
+use crate::{
+    China_sports_lottery::{PlayType, SuperLotto},
+    printtrait::PrintResult,
+};
 
 pub fn args_handle(args: Vec<String>) -> bool {
     if args.len() > 1 {
+        if args[1] == "help" || args[1] == "-h" || args[1] == "--h" || args[1] == "--help" {
+            println!("用法: superlotto [选项]");
+            println!("选项:");
+            println!("  -h, --help        显示帮助信息");
+            println!("  -t, --test        快速测试");
+            println!("  -d, --duplex      双面玩法");
+            println!("  -k, --keyfiller   键盘填充玩法");
+            println!("  -s, --single      单式玩法");
+            println!("  -a, --allseven    全七玩法");
+            println!("  -b, --birthday    生日玩法");
+            return true;
+        }
         if args[1] == "test" || args[1] == "-test" || args[1] == "--test" || args[1] == "-t" {
             SuperLotto::fast_test();
             return true;
