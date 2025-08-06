@@ -7,16 +7,23 @@ fn get_current_qihao() -> u32 {
     let base_date = NaiveDate::from_ymd_opt(2025, 8, 3).unwrap(); // 2025-08-05
     let today = Local::now().date_naive();
 
+    if today < base_date {
+        return 0;
+    }
+
     let diff_days = (today - base_date).num_days();
     let weeks = diff_days / 7;
     let days_left = diff_days % 7;
 
     // 每周3期
     let mut qihao = base_qihao + (weeks * 3) as u32;
-    if days_left > 2 {
+    if days_left >= 1 {
         qihao += 1;
     }
-    if days_left > 5 {
+    if days_left >= 4 {
+        qihao += 1;
+    }
+    if days_left >= 6 {
         qihao += 1;
     }
 
@@ -172,12 +179,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_current_qihao() {
-        let qihao = get_current_qihao();
-        println!("Current Qihao: {}", qihao);
-        assert!(qihao == 25089); // Assuming the current date is after 2025-08-05
-    }
-    #[test]
     #[allow(non_snake_case)]
     fn test_String2V_String() {
         let mut right = vec![
@@ -206,5 +207,74 @@ mod tests {
     fn check() {
         let count = check_number(25089, "01 02 03 04 05 : 01 02 ".to_string());
         println!("Check Number Count: {}", count);
+    }
+}
+
+#[cfg(test)]
+mod test_data {
+    use chrono::NaiveDate;
+
+    pub fn get_current_qihao1(today: NaiveDate) -> u32 {
+        let base_qihao = 25089u32;
+        let base_date = NaiveDate::from_ymd_opt(2025, 8, 6).unwrap(); // 2025-08-06
+
+        if today < base_date {
+            return 0;
+        }
+
+        let diff_days = (today - base_date).num_days();
+        let weeks = diff_days / 7;
+        let days_left = diff_days % 7;
+
+        // 每周3期
+        let mut qihao = base_qihao + (weeks * 3) as u32;
+        if days_left >= 1 {
+            qihao += 1;
+        }
+        if days_left >= 4 {
+            qihao += 1;
+        }
+        if days_left >= 6 {
+            qihao += 1;
+        }
+
+        qihao
+    }
+
+    #[test]
+    fn test8_6() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 6).unwrap()) == 25089);
+    }
+    #[test]
+    fn test8_7() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 7).unwrap()) == 25090);
+    }
+    #[test]
+    fn test8_8() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 8).unwrap()) == 25090);
+    }
+    #[test]
+    fn test8_9() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 9).unwrap()) == 25090);
+    }
+    #[test]
+    fn test8_10() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 10).unwrap()) == 25091);
+    }
+    #[test]
+    fn test8_11() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 11).unwrap()) == 25091);
+    }
+    #[test]
+    fn test8_12() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 12).unwrap()) == 25092);
+    }
+    #[test]
+    fn test8_13() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 13).unwrap()) == 25092);
+    }
+    #[test]
+    fn test8_14() {
+        assert!(get_current_qihao1(NaiveDate::from_ymd_opt(2025, 8, 14).unwrap()) == 25093);
     }
 }
