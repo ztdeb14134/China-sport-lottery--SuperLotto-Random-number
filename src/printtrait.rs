@@ -6,7 +6,7 @@ impl PrintResult for Result<Vec<String>, ()> {
         self.unwrap().into_iter().for_each(|s| println!("{}", s));
     }
 }
-impl PrintResult for [&str; 3] {
+impl<const N: usize> PrintResult for [&str; N] {
     fn printout(self) {
         self.iter().for_each(|s| println!("{}", s));
     }
