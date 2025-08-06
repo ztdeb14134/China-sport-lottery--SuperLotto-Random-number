@@ -1,5 +1,7 @@
 use crate::{
-    printtrait::PrintResult, sql::sqltable::{print_all, print_table_columns}, China_sports_lottery::{PlayType, SuperLotto}
+    China_sports_lottery::{PlayType, SuperLotto},
+    printtrait::PrintResult,
+    sql::sqltable::print_all,
 };
 
 pub fn args_handle(args: Vec<String>) -> bool {

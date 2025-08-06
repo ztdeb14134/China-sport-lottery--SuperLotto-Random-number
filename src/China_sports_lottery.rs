@@ -30,6 +30,7 @@ pub struct SuperLotto {
     pub multiple: Option<usize>,
     pub play_type: PlayType,
     pub number: usize,
+    #[allow(dead_code)]
     pub Additional: bool,
 }
 
@@ -91,21 +92,9 @@ impl SuperLotto {
                     front_result.sort();
                     behind_result.sort();
                     result.push(format!(
-                        "第{}注: {} : {}{}",
-                        x + 1,
+                        "{} : {}",
                         front_result.join(" "),
-                        behind_result.join(" "),
-                        format!(
-                            "{}",
-                            match self.multiple {
-                                Some(m) => format!(
-                                    "  {}倍{}",
-                                    m,
-                                    if self.Additional { "追加" } else { "" }
-                                ),
-                                None => format!("{}", if self.Additional { "  追加" } else { "" }),
-                            }
-                        )
+                        behind_result.join(" ")
                     ));
                 }
                 PlayType::Duplex(front, behind) => {
@@ -120,21 +109,9 @@ impl SuperLotto {
                     front_result.sort();
                     behind_result.sort();
                     result.push(format!(
-                        "第{}注: {} : {}{}",
-                        x + 1,
+                        "{} : {}",
                         front_result.join(" "),
                         behind_result.join(" "),
-                        format!(
-                            "{}",
-                            match self.multiple {
-                                Some(m) => format!(
-                                    "  {}倍{}",
-                                    m,
-                                    if self.Additional { "追加" } else { "" }
-                                ),
-                                None => format!("{}", if self.Additional { "  追加" } else { "" }),
-                            }
-                        )
                     ));
                 }
                 PlayType::KeyFiller(key_front, filler_front, key_behind, filler_behind) => {
@@ -155,19 +132,7 @@ impl SuperLotto {
                     filler_behind_result.sort();
 
                     result.push(format!(
-                        "第{}注{}:\n前区胆:{}\n前区拖:{}\n后区胆:{}\n后区拖:{}",
-                        x + 1,
-                        format!(
-                            "{}",
-                            match self.multiple {
-                                Some(m) => format!(
-                                    "  {}倍{}",
-                                    m,
-                                    if self.Additional { "追加" } else { "" }
-                                ),
-                                None => format!("{}", if self.Additional { "  追加" } else { "" }),
-                            }
-                        ),
+                        "前区胆:{}\n前区拖:{}\n后区胆:{}\n后区拖:{}",
                         keyfront.join(" "),
                         filler_front_result.join(" "),
                         keybehind_result.join(" "),
