@@ -27,7 +27,7 @@ pub fn print_table_columns() {
     }
 }
 #[allow(unused)]
-pub fn print_qihao_all(qihao:u32){
+pub fn print_qihao_all(qihao: u32) {
     let db_path = "lottoSql.db";
     let conn = init_db(db_path).expect("Failed to initialize database");
     let mut stmt = conn
@@ -36,10 +36,10 @@ pub fn print_qihao_all(qihao:u32){
     let rows = stmt
         .query_map([qihao], |row| row.get::<_, String>(0))
         .expect("Failed to query rows");
-
+    println!("大乐透第 {} 期 ", qihao);
     for row in rows {
         let number: String = row.expect("Failed to get row");
-        println!("Qihao {}: Number: {}", qihao, number);
+        println!(" Number: {}", number);
     }
 }
 pub fn print_all() {
@@ -59,7 +59,7 @@ pub fn print_all() {
 
     for row in rows {
         let (qihao_id, number) = row.expect("Failed to get row");
-        println!("Qihao: {}, Number: {}", qihao_id, number);
+        println!("大乐透第 {} 期: Number: {}", qihao_id, number);
     }
 }
 pub fn init_db(db_path: &str) -> Result<Connection> {

@@ -142,6 +142,7 @@ impl SuperLotto {
             }
             if let Some(handle) = handle {
                 handle.join().unwrap();
+                println!();
             }
         }
         Ok(result)
@@ -262,21 +263,35 @@ impl SuperLotto {
 
 #[cfg(test)]
 mod test_probability {
+    use rand::seq::SliceRandom;
 
     #[test]
-    fn test() {
-        let value: u64 = 0b_01000_10000_00000_00000_01100_00000_00100__10000_00001_00;
-        let first = vec![2, 6, 23, 22, 33];
-        let last = vec![1, 10];
-        let mut result_value: u64 = 0;
-        for i in 0..5 {
-            result_value |= 1 << (47 - first[i]); // 最高位是1号，最低位是35号
-        }
-        for i in 0..2 {
-            result_value |= 1 << (12 - last[i]); // 最高位是1号，最低位是12号
-        }
-        println!("{:047b}", result_value);
-        println!("{:047b}", value);
-        assert_eq!(result_value, value);
+    fn happyeight() {
+        let mut boll = (1..=80)
+            .map(|f| format!("{:02}", f))
+            .collect::<Vec<String>>();
+        let mut rng = rand::rng();
+        boll.shuffle(&mut rng);
+
+        let mut h1 = boll.drain(0..10).collect::<Vec<String>>();
+        let mut h2 = boll.drain(0..10).collect::<Vec<String>>();
+        h1.sort();
+        h2.sort();
+        println!("{}\n{}", h1.join(" "), h2.join(" "));
+    }
+    #[test]
+    fn r_b_boll() {
+        let mut red = (1..=33)
+            .map(|f| format!("{:02}", f))
+            .collect::<Vec<String>>();
+        let mut blue = (1..=16)
+            .map(|f| format!("{:02}", f))
+            .collect::<Vec<String>>();
+        let mut rng = rand::rng();
+        red.shuffle(&mut rng);
+        blue.shuffle(&mut rng);
+        let mut r = red.drain(0..6).collect::<Vec<String>>();
+        r.sort();
+        println!("红球: {},篮球:{}", r.join(" "), blue[0]);
     }
 }

@@ -29,27 +29,25 @@ fn main() {
         chrono::Weekday::Mon => {
             let mut super_lotto = SuperLotto::new(PlayType::KeyFiller(0, 5, 1, 11), 1, false);
             super_lotto.draw().printout();
-            protect_code!();
-        }
-        chrono::Weekday::Tue => {
             SuperLotto::all_cast_seven().printout();
+            protect_code!();
         }
         chrono::Weekday::Wed => {
             let mut super_lotto = SuperLotto::new(PlayType::Single, 2, true);
             super_lotto.set_multiple(3);
+            SuperLotto::all_cast_seven().printout();
             super_lotto.draw().printout();
             protect_code!();
-        }
-        chrono::Weekday::Thu => {
-            let mut super_lotto = SuperLotto::new(PlayType::Duplex(6, 2), 1, false);
-            super_lotto.draw().printout();
         }
         chrono::Weekday::Fri => {
+            let mut super_lotto = SuperLotto::new(PlayType::Duplex(6, 2), 1, false);
+            super_lotto.draw().printout();
             let mut super_lotto = SuperLotto::new(PlayType::KeyFiller(2, 5, 1, 2), 1, false);
             super_lotto.draw().printout();
+            SuperLotto::all_cast_seven().printout();
             protect_code!();
         }
-        _ => println!("节制"),
+        _ => println!("请等待到开奖日晚再购彩,不要被主任做局了"),
     }
     println!("Enter to quit...");
     std::io::stdin().read_line(&mut String::new()).unwrap();
